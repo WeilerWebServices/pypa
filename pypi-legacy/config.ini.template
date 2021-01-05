@@ -1,0 +1,141 @@
+[database]
+
+;Postgres Database
+host = hostname
+port = 5432
+name = pypi
+;user = pypi
+
+; Redis
+queue_redis_url = redis://localhost:6379/0
+count_redis_url = redis://localhost:6379/1
+cache_redis_url = redis://localhost:6379/2
+block_redis_url = redis://localhost:6379/3
+xmlrpc_redis_url = redis://localhost:6379/4
+
+; ElasticSearch
+; releases_index_url = http://127.0.0.1:9200
+; releases_index_name = pypi-releases
+
+; AWS
+; aws_access_key_id =
+; aws_secret_access_key =
+
+; Storage Directories
+;files_bucket =
+files_dir = /MacDev/svn.python.org/pypi-pep345/files
+docs_dir = /MacDev/svn.python.org/pypi-pep345/docs
+
+; Third-Party
+pubsubhubbub = http://pubsubhubbub.appspot.com/
+
+[webui]
+
+; PyPI config
+debug_mode = yes
+rss_file = /tmp/pypi_rss.xml
+packages_rss_file = /tmp/pypi_packages_rss.xml
+
+; Email
+adminemail = richard@python.org
+replyto = richard@python.org
+
+; Secrets
+key_dir = .
+cheesecake_password = secret
+; this is the secret used to sign password reset efforts - keep it secret!
+; ''.join(random.choice(string.letters + string.digits) for n in range(64))
+;reset_secret = secret
+
+; URI Paths
+simple_script = /simple
+raw_package_prefix = /raw-packages
+simple_sign_script = /serversig
+
+; URLs
+url =  http://localhost:8000/pypi
+files_url = http://localhost/pypi_files
+pydotorg = http://www.python.org/
+package_docs_url = http://pythonhosted.org/
+
+; Statuspage.io
+statuspage_id = 928bjjg42vzc
+
+[smtp]
+hostname = localhost:25
+starttls = off
+auth = off
+;login = postmaster@localhost
+;password = muchsecret
+
+[passlib]
+; The first listed schemed will automatically be the default, see passlib
+; documentation for a full list of options. Schemes not listed here will
+; not be recognised by passlib.
+;   bcrypt is our current ideal
+;   hex_sha1 is the legacy unsalted
+schemes = bcrypt, hex_sha1
+; Old password schemes will be automatically migrated by passlib - the default
+; for PyPI is "auto" - setting it to blank will disable auto migration. See
+; passlib documentation for more info.
+; deprecated =
+
+[logging]
+file =
+mail_logger = off
+fromaddr =
+toaddrs =
+
+; Not seeing this used in production
+;[mirrors]
+;folder = mirrors
+;local-stats = local-stats
+;global-stats = global-stats
+
+[sentry]
+dsn =
+
+[uwsgi]
+;uid=pypi
+;gid=pypi
+wsgi-file = pypi.wsgi
+socket = /tmp/pypi.sock
+;pidfile = /var/run/devpypi/pypi.pid
+;daemonize = 127.0.0.1:8224
+;processes = 2
+harakiri = 60
+;reload-on-as = 400
+;max-requests = 10000
+master = 1
+post-buffering = 8192
+chmod-socket = 666
+;disable-logging = true
+;log-5xx = true
+
+; CDN API
+[fastly]
+api_domain = https://api.fastly.com/
+api_key =
+service_id =
+
+; IP/User Blocking
+[blocking]
+blocked_timeout = 600  ; in seconds
+blocked_attempts_ip = 10
+blocked_attempts_user = 1000
+
+; XMLRPC Settings
+[xmlrpc]
+max_concurrent = 10
+enforce = false
+request_log_file = /tmp/rpclog
+
+; Authomatic
+[authomatic]
+secure = true
+secret = deadbeefdeadbeefdeadbeefdeadbeef
+
+; Google OAuth 2
+[google]
+client_id =
+client_secret =

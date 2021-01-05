@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    metal:use-macro="standard_template/macros/page"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+>
+<metal:slot fill-slot="body">
+
+<!-- selected categories -->
+<table style="display: inline; white-space: nowrap;" tal:condition="data/selected_categories">
+<tr tal:repeat="selected data/selected_categories">
+  <td style="font-weight: bold; padding-left: 20px;">
+    <span tal:replace="structure selected/pathstr" />
+  </td>
+  <td style="font-size: small; color: #999;">
+    [<a tal:attributes="href selected/unselect_url">unselect</a>]
+  </td>
+</tr>
+</table>
+
+<!-- packages -->
+<br tal:condition="not: data/show_packages" />
+<br tal:condition="data/show_packages" clear="both" />
+
+<table class="list" style="display: inline; width: 100%;">
+
+<tbody tal:condition="not: data/show_packages">
+<tr><th>Packages</th></tr>
+<tr class="odd">
+  <td style="text-align: center; padding: 4px; padding-left: 5%; padding-right: 5%;">
+    <span tal:condition="data/selected_categories">
+      There are <span tal:replace="data/packages_count"/> packages in the categories you have selected.
+      Please select more categories, or <a tal:attributes="href data/show_packages_url">show all</a>
+      matching packages now.
+    </span>
+    <span tal:condition="not: data/selected_categories">
+      Please select a category from below.
+    </span>
+  </td>
+</tr>
+<tr><td id="last"></td></tr>
+</tbody>
+
+<tbody tal:condition="data/show_packages">
+<tr><th>Package</th><th>Description</th></tr>
+<tr tal:repeat="package data/packages"
+    tal:attributes="class repeat/package/parity">
+  <td><a tal:attributes="href package/url" tal:content="package/name">package name</a></td>
+  <td tal:content="package/summary">package summary</td>
+</tr>
+<tr><td id="last" colspan="2"></td></tr>
+</tbody>
+
+</table>
+
+<!-- available categories -->
+<div tal:repeat="category data/available_categories">
+<h2 tal:content="category/name" style="margin-bottom: 5px;">Category</h2>
+
+<ul style="list-style: none; padding: 0; margin: 0; margin-left: 10px;">
+<li tal:repeat="subcategory category/subcategories" style="display: inline; margin: 0 0.15em; margin-right: 10px; white-space: nowrap;"><a tal:attributes="href subcategory/url" tal:content="subcategory/name">Subcategory</a> <small style="color: #666">(<span tal:replace="subcategory/packages_count"/>)</small></li>
+</ul>
+
+</div>
+
+</metal:slot>
+</html>

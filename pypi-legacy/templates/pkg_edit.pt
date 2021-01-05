@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="standard_template/macros/page">
+<metal:fill fill-slot="body">
+
+<p tal:replace="structure app/release_nav" />
+
+<p>
+  Each project may have a release for each version of the
+  project that is released. You may use this form to hide releases
+  from users.
+</p>
+
+<p>Administer the <a tal:attributes="href string:${app/url_path}?:action=role_form&amp;package_name=${app/form/name}">Role</a>
+assigned to users for this project.</p>
+
+<p><b>For all activities relating to Project/Release changes except for hiding releases, you must use
+    <tal:x tal:condition="python:'testpypi' in app.config.url">
+    <a href="https://test.pypi.org/manage/projects/">the Warehouse test instance</a>
+    </tal:x>
+    <tal:x tal:condition="python:'testpypi' not in app.config.url">
+    <a href="https://pypi.org/manage/projects/">Warehouse</a>
+    </tal:x></b>
+</p>
+
+<form tal:attributes="action app/url_path" method="POST">
+ <input type="hidden" name=":action" value="pkg_edit" />
+ <input type="hidden" name="name" tal:attributes="value data/name" />
+
+ <table class="list" style="width: auto">
+  <tr><th>Version</th><th>Hide?</th><th>Summary</th>
+      <th colspan="2">Links</th></tr>
+
+  <tr tal:repeat="release data/releases"
+      tal:attributes="class repeat/release/parity">
+   <td tal:content="release/version" />
+   <td>
+    <select tal:attributes="name string:hid_${release/version}">
+      <div tal:omit-tag=""
+           tal:condition="release/_pypi_hidden">
+        <option value="0">No</option>
+        <option value="1" selected="selected">Yes</option>
+      </div>
+      <div tal:omit-tag=""
+           tal:condition="not:release/_pypi_hidden">
+        <option value="0" selected="selected">No</option>
+        <option value="1">Yes</option>
+      </div>
+    </select>
+   </td>
+   <td><input size="40" tal:attributes="name string:sum_${release/version};
+        value release/summary" /></td>
+   <td><a tal:attributes="href string:${app/url_path}?:action=display&amp;name=${data/name}&amp;version=${release/version}">show</a></td>
+   <td><a tal:attributes="href string:${app/url_path}?:action=files&amp;name=${data/name}&amp;version=${release/version}">files</a></td>
+  </tr>
+
+ <tr>
+  <td id="last"> </td>
+  <td id="last" colspan="5">
+   <input type="submit" name="submit_submit" value="Update Releases" />
+  </td>
+ </tr>
+</table>
+</form>
+
+<p>By default, each new release will hide all other release from the
+regular display. If you want to select yourself which projects to hide,
+uncheck the button below</p>
+<form tal:attributes="action app/url_path" method="POST"
+    enctype="multipart/form-data">
+  <input type="hidden" name=":action" value="pkg_edit" />
+  <input type="hidden" name="name" tal:attributes="value data/name" />
+
+  <!-- Apparently, we run TAL in XML mode, so the auto-remove feature
+       for the checked attribute will not work -->
+  <input tal:condition="data/autohide" type="checkbox" name="autohide"
+         checked="checked">Auto-hide old releases</input>
+  <input tal:condition="not:data/autohide" type="checkbox" name="autohide">Auto-hide old releases</input>
+  <input type="submit" name="submit_autohide" value="Change" />
+  <br/>
+</form>
+
+
+<p>If you would like to <b>DESTROY</b> any existing documentation hosted at
+<a tal:attributes="href string:http://pythonhosted.org/${data/name}"
+tal:content="string:http://pythonhosted.org/${data/name}"></a>: Please use
+<tal:x tal:condition="python:'testpypi' in app.config.url">
+<a href="https://test.pypi.org/manage/projects/">the Warehouse test instance</a>
+</tal:x>
+<tal:x tal:condition="python:'testpypi' not in app.config.url">
+<a href="https://pypi.org/manage/projects/">Warehouse</a>
+</tal:x>
+</p>
+<p></p>
+
+</metal:fill>
+</html>

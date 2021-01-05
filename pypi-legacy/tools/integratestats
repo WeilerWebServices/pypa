@@ -1,0 +1,79 @@
+#!/usr/bin/python
+import sys, os, socket, psycopg2, urllib, re, bz2, cStringIO, ConfigParser
+sys.path.append(os.path.dirname(__file__)+"/..")
+import apache_stats
+
+statsdir = '/data/www/pypi/stats'
+
+def integrate(config, data, dbconn):
+    for (filename, browser, package), count in data.items():
+        cursor.execute('update release_files set downloads=downloads+%s where filename=%s',
+                       (count, filename))
+    dbconn.commit()
+
+def integrate_remote(config, host, dbconn, dbupdate=True):
+    url = 'http://%s.pypi.python.org/local-stats/days/' % host
+    try:
+        index = urllib.urlopen(url).read()
+    except Exception, e:
+        print 'ERROR %s for %s' % (e, url)
+        return
+    files = set(re.findall('href=.(20..-..-..).bz2', index))
+    try:
+        integrated = open(statsdir+'/integrated/'+host).readlines()
+        integrated = set([x.strip() for x in integrated])
+    except IOError:
+        integrated = set()
+    missing = files-integrated
+    stats = apache_stats.LocalStats()
+    for m in missing:
+        url = 'http://%s.pypi.python.org/local-stats/days/%s.bz2' % (host, m)
+        try:
+            data = urllib.urlopen(url).read()
+        except Exception, e:
+            print 'ERROR %s for %s' % (e, url)
+            continue
+        data = bz2.decompress(data)
+        data = cStringIO.StringIO(data)
+        year, month, day = m.split('-')
+        # index integration
+        delta = stats.integrate_stats(statsdir, year, month, day, data)
+        if dbupdate:
+            # database integration
+            integrate(config, delta, dbconn=dbconn)
+        integrated.add(m)
+        open(statsdir+'/integrated/'+host, 'w').write('\n'.join(sorted(integrated)))
+
+def main():
+    # Setup database connection
+    c = ConfigParser.ConfigParser({'user':'', 'password':''})
+    c.read(sys.argv[1])
+    dbname = c.get('database', 'name')
+    dbuser = c.get('database', 'user')
+    dbpass = c.get('database', 'password')
+    dbhost = c.get('database', 'host')
+    dbconn = psycopg2.connect(database=dbname, user=dbuser, password=dbpass, host=dbhost)
+
+    lasts = socket.gethostbyname_ex('last.pypi.python.org')
+    # look for name X.pypi.python.org
+    lasts = [lasts[0]] + lasts[1]
+    for last in lasts:
+        if last[1:] == '.pypi.python.org':
+            break
+    else:
+        raise ValueError, "Could not properly resolve last mirror name"
+    last = last.split('.')[0]
+    host = 'a'
+    while True:
+        if host == "d":
+            # This is just a CNAME back to a.pypi.python.org
+            continue
+
+        integrate_remote(sys.argv[1], host, dbconn=dbconn)
+        if host == last:
+            break
+        host = chr(ord(host)+1)
+    dbconn.close()
+
+main()
+

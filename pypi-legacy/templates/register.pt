@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="standard_template/macros/page">
+  <metal:fill fill-slot="body">
+
+    <p tal:condition="not:data/new_user">
+    This form allows to modify your PyPI account information, and to delete your account.
+    <form tal:attributes="action app/url_path" method="POST"
+          tal:condition="not:data/owns_packages">
+        <input type="hidden" name=":action" value="delete_user" />
+	<input type="submit" value="Delete account"/>
+    </form>
+    <tal:block tal:condition="data/owns_packages">You cannot delete your account since you
+    are still listed as owner of some packages.</tal:block>
+    </p>
+    <form tal:attributes="action app/url_path" method="POST">
+      <input type="hidden" name=":action" value="user" />
+      <input type="hidden" name="name" tal:condition="not:data/new_user"
+	     tal:attributes="value data/name"/>
+      <tal:block tal:repeat="field data/openid_fields">
+       <input type="hidden" tal:attributes="name python:field[0];value python:field[1].decode('utf-8')"/>
+      </tal:block>
+      <table class="form">
+	<tr>
+	  <th>Username:</th>
+	  <td tal:condition="data/new_user"><input name="name" tal:attributes="value data/name"/></td>
+	  <td tal:condition="not:data/new_user" tal:content="data/name"></td>
+	</tr>
+	<tal:block tal:condition="not:data/openid_fields">
+	<tr>
+	  <th>Password:</th>
+	  <td><input type="password" name="password"/></td>
+	</tr>
+	<tr>
+	  <th>Confirm:</th>
+	  <td><input type="password" name="confirm" /></td>
+	</tr>
+        </tal:block>
+        <tr tal:condition="data/openid">
+          <th>OpenID:</th>
+          <td tal:content="data/openid"/>
+        </tr>
+	<tr>
+	  <th>Email Address:</th>
+	  <td><input name="email" tal:attributes="value data/email" /></td>
+	</tr>
+	<tr>
+	  <th></th>
+	  <td><input type="submit" tal:attributes="value data/action" /></td>
+	</tr>
+      </table>
+    </form>
+
+  <p>Please ensure your password is of a reasonable length (>8 characters) and
+    mixes letters, cases and numbers. Please don't use the same password
+    as with other services.</p>
+
+    <tal:block tal:condition="data/new_user">
+      <p><b>A confirmation email will be sent to the address you nominate above.</b></p>
+      <p>Please ensure you will be able to receive email from admin@mail.pypi.python.org
+      (check any "sender confirmation" systems you might be using.)</p>
+      <p>To complete the registration process, you must visit the link indicated in the
+      email.</p>
+    </tal:block>
+
+    <tal:block tal:condition="not:data/new_user">
+      <form tal:attributes="action app/url_path" method="POST" tal:repeat="key data/sshkeys">
+      <input type="hidden" name=":action" value="delkey" />
+      <input type="hidden" name="id" tal:attributes="value key/id" />
+      <textarea name="key" cols="50" rows="4" readonly="1" tal:content="key/key"/>
+      <input type="submit" value="Delete this key"/>
+      </form>
+    </tal:block>
+
+    <tal:block tal:condition="data/openids">
+     <p>Your OpenIDs:</p>
+     <ul>
+       <li tal:repeat="curid data/openids"><span tal:replace="curid/id"/>
+       <form tal:attributes="action app/url_path" method="POST">
+        <input type="hidden" name=":action" value="dropid"/>
+        <input type="hidden" name="openid" tal:attributes="value curid/id"/>
+        <input type="submit" value="Drop this ID"/>
+       </form>
+       </li>
+     </ul>
+    </tal:block>
+
+    <p tal:condition="not:data/new_user">Claim OpenID, either from one of these providers:
+     <tal:block tal:repeat="prov data/providers">
+      <a style="border: none;" tal:attributes="href prov/claim"><img width="16" height="16" tal:attributes="src prov/favicon; title prov/title; alt prov/title"/></a>
+     </tal:block>
+    or enter your ID explicitly:
+    <form action="/openid_claim" method='POST'>
+      <input name='openid_identifier' size='60'/>
+      <input type='submit' value='Claim'/>
+    </form>
+    </p>
+  </metal:fill>
+</html>

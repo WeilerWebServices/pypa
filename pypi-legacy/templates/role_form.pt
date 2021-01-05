@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="standard_template/macros/page">
+<metal:fill fill-slot="body">
+
+<p>
+You must use
+    <tal:x tal:condition="python:'testpypi' in app.config.url">
+    <a href="https://test.pypi.org/manage/projects/">the Warehouse test instance</a>
+    </tal:x>
+    <tal:x tal:condition="python:'testpypi' not in app.config.url">
+    <a href="https://pypi.org/manage/projects/">Warehouse</a>
+    </tal:x>
+to manage roles now.
+</p>
+
+</metal:fill>
+</html>

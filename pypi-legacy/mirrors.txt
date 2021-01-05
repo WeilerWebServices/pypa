@@ -1,0 +1,6 @@
+b: appengine, martin@v.loewis.de
+c: 178.77.74.179, pypi@zopyx.com
+d: pypi.websushi.org, jezdez+pypi@enn.io
+e: pypi.tuna.tsinghua.edu.cn, thu-opensource-mirror-admin@googlegroups.com
+f: services02.fe.rzob.gocept.net, support@gocept.com
+g: 129.21.171.98, rc-help@rit.edu

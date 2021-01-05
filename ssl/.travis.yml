@@ -1,0 +1,9 @@
+language: python
+python:
+  - 2.5
+before_install:
+  - pip uninstall -y sslfix
+  - pip uninstall -y ssl  # just to be sure
+install:
+  - pip install .
+script: python test/test_ssl.py

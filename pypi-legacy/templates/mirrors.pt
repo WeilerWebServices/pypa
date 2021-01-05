@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="standard_template/macros/page">
+      <metal:fill fill-slot="body">
+
+<p><b>The public PyPI mirrors using *.pypi.python.org DNS aliases have been
+    deprecated as specified in
+    <a href="http://www.python.org/dev/peps/pep-0449/">PEP 449 (Removal of
+    the PyPI Mirror Auto Discovery and Naming Scheme)</a>. Package
+    files uploaded to PyPI are now served through a CDN which is more reliable.
+    You are welcome to continue to run your own private mirrors, but the DNS
+    aliases for the mirror network ([a..z].pypi.python.org) were shut down on
+    February 15th, 2014.</b></p>
+
+<p>If you'd like to use a mirror, resources like
+   <a href="http://www.pypi-mirrors.org/">http://www.pypi-mirrors.org/</a>
+   are available to find public mirrors of PyPI.</p>
+
+<p><b>Additionally, the "mirror authenticity" API specified in the PEP below
+will be deprecated in the near future, and use of it is discouraged.</b></p>
+
+<p>Use the <a href="https://pypi.python.org/pypi/bandersnatch">bandersnatch</a>
+mirroring client to set up your own mirror.</p>
+
+ <p>The mirroring protocol is defined in <a href="http://www.python.org/dev/peps/pep-0381">http://www.python.org/dev/peps/pep-0381</a></p>
+
+ </metal:fill>
+</html>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="standard_template/macros/page">
+  <metal:fill fill-slot="body">
+    <p tal:condition="data/message" tal:content="data/message"></p>
+    <p tal:condition="exists:data/url">
+      <a tal:attributes="href data/url" tal:content="data/url_text"></a>
+    </p>
+  </metal:fill>
+</html>

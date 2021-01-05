@@ -1,0 +1,43 @@
+2013 Sprints
+
+- the distutils upload command omits some meta-data (long_description)
+- the upload handler doesn't allow registration of a new package
+- distutils doesn't allow specifying https, nor does it default to https
+- OAuth PEM to users over HTTPS
+
+
+
+
+
+
+
+Now:
+
+- patch python 2.5 to use the name "Cheese Shop" and the new URL
+- PEP for metadata 1.2
+  http://www.python.org/peps/pep-0345.html
+- support .egg format uploads
+  https://sourceforge.net/tracker/?func=detail&atid=513503&aid=1229137&group_id=66150
+- incorporate Ian Bicking's XML-RPC API
+  http://mail.python.org/pipermail/catalog-sig/2005-May/000634.html
+- auto-generate download_urls for package uploads
+
+
+Sooner:
+
+- command-line tool to query pypi and fetch entries
+- table structure and query support for checking dependencies
+  - table structure has columns for identification of the release
+    - add a specification ID to release_*?
+    - or just use release, name
+  - table also has a column for each of <, <=, ==, >=, > so queries are
+    easier to form
+
+Later:
+
+- change notification emails
+- "latest changes"
+- admin interface for user details editing (and fix theller@python.net)
+- "does this release supercede the existing release?"
+
+

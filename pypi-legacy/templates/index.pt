@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    metal:use-macro="standard_template/macros/page">
+<metal:slot fill-slot="body">
+
+<p tal:condition="not: data/matches">
+  There were no matches.</p>
+
+<table class="list" tal:condition="data/matches">
+<tr>
+ <th>Package</th>
+ <th tal:condition="exists:data/scores"><u title="Occurrence of search term weighted by field (name, summary, keywords, description, author, maintainer)">Weight*</u></th>
+ <th>Description</th>
+</tr>
+
+<tr tal:repeat="pkg data/matches"
+    tal:attributes="class repeat/pkg/parity">
+ <td tal:content="structure python: 
+  app.packageLink(pkg['name'], pkg['version'])">
+  link</td>
+ <td tal:condition="exists:data/scores"
+     tal:content="python:data['scores'][pkg['name']]" />
+ <td tal:content="pkg/summary">summary</td>
+</tr>
+
+<tr>
+ <td id="last" colspan="3"></td>
+</tr>
+</table>
+
+<p tal:condition="exists:data/scores">*: occurrence of search term weighted by
+field (name, summary, keywords, description, author, maintainer)</p>
+
+</metal:slot>
+</html>

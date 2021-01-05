@@ -1,0 +1,75 @@
+*** dist.py	Wed Dec  4 15:41:53 2002
+--- dist.py-new	Wed Dec  4 15:41:32 2002
+***************
+*** 93,98 ****
+--- 93,100 ----
+           "print the long package description"),
+          ('platforms', None,
+           "print the list of platforms"),
++         ('classifiers', None,
++          "print the list of classifiers"),
+          ('keywords', None,
+           "print the list of keywords"),
+          ]
+***************
+*** 634,639 ****
+--- 636,643 ----
+                  value = getattr(self.metadata, "get_"+opt)()
+                  if opt in ['keywords', 'platforms']:
+                      print string.join(value, ',')
++                 elif opt == 'classifiers':
++                     print string.join(value, '\n')
+                  else:
+                      print value
+                  any_display_options = 1
+***************
+*** 962,968 ****
+                           "maintainer", "maintainer_email", "url",
+                           "license", "description", "long_description",
+                           "keywords", "platforms", "fullname", "contact",
+!                          "contact_email", "licence")
+  
+      def __init__ (self):
+          self.name = None
+--- 966,972 ----
+                           "maintainer", "maintainer_email", "url",
+                           "license", "description", "long_description",
+                           "keywords", "platforms", "fullname", "contact",
+!                          "contact_email", "licence", "classifiers")
+  
+      def __init__ (self):
+          self.name = None
+***************
+*** 977,982 ****
+--- 981,987 ----
+          self.long_description = None
+          self.keywords = None
+          self.platforms = None
++         self.classifiers = None
+  
+      def write_pkg_info (self, base_dir):
+          """Write the PKG-INFO file into the release tree.
+***************
+*** 1003,1008 ****
+--- 1008,1016 ----
+          for platform in self.get_platforms():
+              pkg_info.write('Platform: %s\n' % platform )
+  
++         for classifier in self.get_classifiers():
++             pkg_info.write('Classifier: %s\n' % classifier )
++ 
+          pkg_info.close()
+  
+      # write_pkg_info ()
+***************
+*** 1059,1064 ****
+--- 1067,1075 ----
+      def get_platforms(self):
+          return self.platforms or ["UNKNOWN"]
+  
++     def get_classifiers(self):
++         return self.classifiers or []
++ 
+  # class DistributionMetadata
+  
+  
