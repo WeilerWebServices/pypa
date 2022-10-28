@@ -160,7 +160,26 @@ def test_include_editable_packages(PipenvInstance, testsroot, pathlib_tmpdir):
     source_path = os.path.abspath(os.path.join(testsroot, "pypi", "tablib", file_name))
     with PipenvInstance(chdir=True) as p:
         with tarfile.open(source_path, "r:gz") as tarinfo:
-            tarinfo.extractall(path=str(pathlib_tmpdir))
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(tarinfo, path=str(pathlib_tmpdir))
         c = p.pipenv('install -e {0}'.format(package.as_posix()))
         assert c.return_code == 0
         project = Project()
